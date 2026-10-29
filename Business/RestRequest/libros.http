@@ -1,0 +1,46 @@
+@host = http://localhost:9090/api
+@uri = {{host}}/biblioteca_libros
+
+GET {{uri}}
+###
+
+GET {{uri}}/1
+###
+
+POST {{uri}}
+Content-Type: application/json
+
+{
+    "isbn": "978-0-307-47472-8",
+    "titulo": "El amor en los tiempos del cólera",
+    "autor": "Gabriel García Márquez",
+    "anio_publicacion": 1985,
+    "ejemplares_disponibles": 4
+}
+###
+
+PUT {{uri}}/2
+Content-Type: application/json
+
+{
+    "isbn": "978-84-206-5100-6",
+    "titulo": "Don Quijote de la Mancha",
+    "autor": "Miguel de Cervantes Saavedra",
+    "anio_publicacion": 1605,
+    "ejemplares_disponibles": 7
+}
+###
+
+DELETE {{uri}}/2
+###
+
+POST {{uri}}
+Content-Type: application/json
+
+{
+    "isbn": "abc",
+    "titulo": "",
+    "autor": "Autor Prueba",
+    "anio_publicacion": 3000,
+    "ejemplares_disponibles": -1
+}

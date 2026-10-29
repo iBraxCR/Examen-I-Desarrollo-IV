@@ -1,0 +1,49 @@
+services:
+
+  jbgdb:
+    image: mysql:9.7
+    container_name: jbgdb
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_password
+      MYSQL_DATABASE: db_biblioteca
+    volumes:
+      - ./db_dump:/docker-entrypoint-initdb.d:ro
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    secrets:
+      - db_password
+
+  jbgdatos:
+    container_name: jbgdatos
+    build:
+      context: .
+      dockerfile: ./Data/Dockerfile
+    env_file:
+      - ./Data/.env
+    depends_on:
+      jbgdb:
+        condition: service_healthy
+
+  jbgnegocio:
+    container_name: jbgnegocio
+    build:
+      context: .
+      dockerfile: ./Business/Dockerfile
+    ports:
+      - 9090:80
+    env_file:
+      - ./Business/.env
+    depends_on:
+      - jbgdatos
+
+secrets:
+  db_password:
+    file: ./db_password.txt
+
+volumes:
+  db_data:
